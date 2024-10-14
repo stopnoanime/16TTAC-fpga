@@ -1,0 +1,7 @@
+*
+
+!.gitignore
+!project.al
+!project.adc
+
+!src/
