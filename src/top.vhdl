@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.NUMERIC_STD.all;
+use work.package_16TTAC.all;
 
 entity Top is
   port (
@@ -36,10 +37,10 @@ begin
       SEL_DEST_ZERO  => "0000000"
     )
     port map(
-      bus_in     => open,
-      bus_out    => open,
-      carry_flag => open,
-      zero_flag  => open
+      bus_in         => open,
+      bus_out        => open,
+      carry_flag_out => open,
+      zero_flag_out  => open
     );
 
 end architecture;

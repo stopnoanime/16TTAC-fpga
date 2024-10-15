@@ -21,18 +21,23 @@ entity ALU is
     SEL_DEST_ZERO  : select_type
   );
   port (
-    bus_in     : in cpu_bus_in;
-    bus_out    : out cpu_bus_out;
-    carry_flag : out std_logic;
-    zero_flag  : out std_logic
+    bus_in         : in cpu_bus_in;
+    bus_out        : out cpu_bus_out;
+    carry_flag_out : out std_logic;
+    zero_flag_out  : out std_logic
   );
 end ALU;
 
 architecture rtl of ALU is
 
-  signal acc : std_logic_vector(15 downto 0);
+  signal acc        : std_logic_vector(15 downto 0);
+  signal carry_flag : std_logic;
+  signal zero_flag  : std_logic;
 
 begin
+
+  carry_flag_out <= carry_flag;
+  zero_flag_out  <= zero_flag;
 
   process (bus_in.clk)
 
@@ -54,48 +59,43 @@ begin
 
       -- DESTINATION
       save_result := TRUE;
-      case bus_in.dest_sel is
-        when SEL_DEST_ACC =>
-          result := unsigned(bus_in.data);
-        when SEL_DEST_ADD =>
-          result := unsigned('0' & bus_in.data) + unsigned(acc) + ("" & carry_flag);
-        when SEL_DEST_SUB =>
-          result := unsigned(acc) - unsigned('0' & bus_in.data) - ("" & carry_flag);
-        when SEL_DEST_SHL =>
-          result := shift_left(unsigned(acc), to_integer(unsigned(bus_in.data)));
-        when SEL_DEST_SHR =>
-          result := shift_right(unsigned(acc), to_integer(unsigned(bus_in.data)));
-        when SEL_DEST_AND =>
-          result := unsigned(bus_in.data) and unsigned(acc);
-        when SEL_DEST_OR =>
-          result := unsigned(bus_in.data) or unsigned(acc);
-        when SEL_DEST_XOR =>
-          result := unsigned(bus_in.data) xor unsigned(acc);
 
-        when SEL_DEST_CARRY =>
-          save_result := FALSE;
-        when SEL_DEST_ZERO =>
-          save_result := FALSE;
+      if bus_in.dest_sel = SEL_DEST_ACC then
+        result := unsigned('0' & bus_in.data);
+      elsif bus_in.dest_sel = SEL_DEST_ADD then
+        result := unsigned('0' & acc) + unsigned('0' & bus_in.data) + ("" & carry_flag);
+      elsif bus_in.dest_sel = SEL_DEST_SUB then
+        result := unsigned('0' & acc) - unsigned('0' & bus_in.data) - ("" & carry_flag);
 
-        when others =>
-          save_result := FALSE;
+      elsif bus_in.dest_sel = SEL_DEST_SHL then
+        result := shift_left(unsigned('0' & acc), to_integer(unsigned(bus_in.data)));
+      elsif bus_in.dest_sel = SEL_DEST_SHR then
+        result := shift_right(unsigned('0' & acc), to_integer(unsigned(bus_in.data)));
 
-      end case;
+      elsif bus_in.dest_sel = SEL_DEST_AND then
+        result := unsigned('0' & bus_in.data) and unsigned('0' & acc);
+      elsif bus_in.dest_sel = SEL_DEST_OR then
+        result := unsigned('0' & bus_in.data) or unsigned('0' & acc);
+      elsif bus_in.dest_sel = SEL_DEST_XOR then
+        result := unsigned('0' & bus_in.data) xor unsigned('0' & acc);
+
+      elsif bus_in.dest_sel = SEL_DEST_CARRY then
+        save_result := FALSE;
+        carry_flag <= or bus_in.data;
+
+      elsif bus_in.dest_sel = SEL_DEST_ZERO then
+        save_result := FALSE;
+        zero_flag <= or bus_in.data;
+
+      else
+        save_result := FALSE;
+
+      end if;
 
       if save_result = TRUE then
-        if result(31 downto 0) = x"0000" then
-          zero_flag <= '1';
-        else
-          zero_flag <= '0';
-        end if;
-
-        if result(32) = '1' then
-          carry_flag <= '1';
-        else
-          carry_flag <= '0';
-        end if;
-
-        acc <= std_logic_vector(result(31 downto 0));
+        carry_flag <= result(16);
+        zero_flag  <= nor result(15 downto 0);
+        acc        <= std_logic_vector(result(15 downto 0));
       end if;
 
     end if;

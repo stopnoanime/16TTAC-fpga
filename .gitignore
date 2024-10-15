@@ -3,3 +3,6 @@
 *.db
 *.area
 build/
+*.exe
+*.vcd
+*.o
