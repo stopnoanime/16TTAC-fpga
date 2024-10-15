@@ -45,3 +45,4 @@ view:
 
 clean:
 	@rm -rf $(WORKDIR)
+	@rm *.area *.db *.exe *.vcd *.o *.log *.bit
