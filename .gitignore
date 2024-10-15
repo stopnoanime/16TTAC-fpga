@@ -1,7 +1,5 @@
-*
-
-!.gitignore
-!project.al
-!project.adc
-
-!src/
+*.log
+*.bit
+*.db
+*.area
+build/
