@@ -1,6 +1,5 @@
 # vhdl files
-#FILES = src/*
-FILES = src/alu.vhdl
+FILES = $(filter-out src/package.vhdl, $(wildcard src/*.vhdl))
 PACKAGE_FILE = src/package.vhdl
 
 # testbench
@@ -45,4 +44,4 @@ view:
 
 clean:
 	@rm -rf $(WORKDIR)
-	@rm *.area *.db *.exe *.vcd *.o *.log *.bit
+	@rm -rf *.area *.db *.exe *.vcd *.o *.log *.bit
