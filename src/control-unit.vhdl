@@ -8,27 +8,27 @@ entity ControlUnit is
         SEL_SRC_OP : select_type
     );
     port (
-        clk_in   : in std_logic;
-        reset_in : in std_logic;
+        clk_in        : in std_logic;
+        reset_in      : in std_logic;
 
         halt_in       : in std_logic;
         carry_flag_in : in std_logic;
         zero_flag_in  : in std_logic;
         data_in       : in std_logic_vector(15 downto 0);
 
-        src_sel_out  : out select_type;
-        dest_sel_out : out select_type
+        src_sel_out   : out select_type;
+        dest_sel_out  : out select_type
     );
 end entity;
 
 architecture rtl of ControlUnit is
 
-    signal src_sel : select_type;
-    signal dest_sel : select_type;
+    signal src_sel        : select_type;
+    signal dest_sel       : select_type;
     signal should_execute : boolean;
 
     type state_type is (FETCH, SRC, DEST);
-    signal state : state_type := FETCH;
+    signal state            : state_type := FETCH;
     signal delayed_dest_sel : select_type;
 
 begin
@@ -47,18 +47,18 @@ begin
         data_in(8 downto 2) when should_execute else
         (others => '0');
 
-    src_sel_out <= (others => '0') when halt_in else
-        src_sel;
-    dest_sel_out <= (others => '0') when halt_in else
-        delayed_dest_sel;
+    src_sel_out <= (others => '0') when halt_in = '1' else src_sel;
+    dest_sel_out <= (others => '0') when halt_in = '1' else delayed_dest_sel;
 
     process (clk_in)
     begin
+
         if rising_edge(clk_in) then
+            
             if reset_in = '1' then
 
                 delayed_dest_sel <= (others => '0');
-                state <= FETCH;
+                state            <= FETCH;
 
             elsif halt_in = '0' then
 
@@ -74,6 +74,9 @@ begin
                 end case;
 
             end if;
+
         end if;
+
     end process;
+
 end architecture;

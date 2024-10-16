@@ -7,7 +7,7 @@ package package_16TTAC is
 
     type cpu_bus_in is record
         clk      : std_logic;
-        reset    : boolean;
+        reset    : std_logic;
         src_sel  : select_type;
         dest_sel : select_type;
         data     : std_logic_vector(15 downto 0);
@@ -15,12 +15,12 @@ package package_16TTAC is
 
     type cpu_bus_out is record
         data : std_logic_vector(15 downto 0);
-        halt : boolean;
+        halt : std_logic;
     end record;
 
     type mem_interface is record
         clk      : std_logic;
-        write_en : boolean;
+        write_en : std_logic;
         adr      : std_logic_vector(15 downto 0);
         data     : std_logic_vector(15 downto 0);
     end record;

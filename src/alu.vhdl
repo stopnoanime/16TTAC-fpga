@@ -92,7 +92,7 @@ begin
 
             end if;
 
-            if save_result = TRUE then
+            if save_result then
                 carry_flag <= result(16);
                 zero_flag  <= nor result(15 downto 0);
                 acc        <= std_logic_vector(result(15 downto 0));

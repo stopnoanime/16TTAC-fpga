@@ -25,7 +25,7 @@ begin
 
         if rising_edge(interface_in.clk) then
 
-            if interface_in.write_en then
+            if interface_in.write_en = '1' then
                 block_ram(to_integer(unsigned(interface_in.adr))) <= interface_in.data;
             end if;
 

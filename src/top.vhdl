@@ -6,12 +6,12 @@ use work.package_16TTAC.all;
 entity Top is
     port (
         -- 24MHz clock
-        clk_in   : in std_logic;
-        reset_in : in std_logic;
+        clk_in    : in std_logic;
+        resetn_in : in std_logic;
 
         -- UART
-        uart_tx  : out std_logic;
-        uart_rx  : inout std_logic
+        uart_tx   : out std_logic;
+        uart_rx   : inout std_logic
     );
 end entity;
 

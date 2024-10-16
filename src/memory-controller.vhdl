@@ -32,13 +32,11 @@ architecture rtl of MemoryController is
 begin
 
     mem_interface_out.clk      <= bus_in.clk;
-    mem_interface_out.write_en <= bus_in.dest_sel = SEL_DEST_MEM;
     mem_interface_out.data     <= bus_in.data;
-    mem_interface_out.adr      <= pc_in when bus_in.src_sel = SEL_SRC_OP else
-    adr;
+    mem_interface_out.write_en <= '1' when bus_in.dest_sel = SEL_DEST_MEM else '0';
+    mem_interface_out.adr      <= pc_in when bus_in.src_sel = SEL_SRC_OP else adr;
 
-    bus_out.data <= mem_data_in when pass_mem_output else
-    data_out;
+    bus_out.data <= mem_data_in when pass_mem_output else data_out;
 
     process (bus_in.clk)
     begin
