@@ -56,7 +56,7 @@ begin
                 elsif bus_in.src_sel = SEL_SRC_IN then
 
                     if read_available = '1' then
-                        bus_out.data   <= interface_in.data;
+                        bus_out.data   <= x"00" & interface_in.data;
                         read_available <= '0';
                     else
                         waiting_for_read <= '1';
@@ -71,14 +71,14 @@ begin
 
                 -- READ HALT
                 if waiting_for_read = '1' and read_available = '1' then
-                    bus_out.data     <= interface_in.data;
+                    bus_out.data     <= x"00" & interface_in.data;
                     read_available   <= '0';
                     waiting_for_read <= '0';
                 end if;
 
                 -- DESTINATION
                 if bus_in.dest_sel = SEL_DEST_OUT then
-                    interface_out.data <= bus_in.data;
+                    interface_out.data <= bus_in.data(7 downto 0);
 
                     if interface_in.write_avail = '1' then
                         interface_out.write_en <= '1';
