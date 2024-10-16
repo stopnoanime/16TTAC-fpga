@@ -8,8 +8,8 @@ entity Memory is
         MEM_SIZE : natural
     );
     port (
-        interface_in : in mem_interface;
-        data_out     : out std_logic_vector(15 downto 0)
+        interface_in : in mem_interface_in;
+        interface_out : out mem_interface_out
     );
 end entity;
 
@@ -29,7 +29,7 @@ begin
                 block_ram(to_integer(unsigned(interface_in.adr))) <= interface_in.data;
             end if;
 
-            data_out <= block_ram(to_integer(unsigned(interface_in.adr)));
+            interface_out.data <= block_ram(to_integer(unsigned(interface_in.adr)));
         end if;
 
     end process;

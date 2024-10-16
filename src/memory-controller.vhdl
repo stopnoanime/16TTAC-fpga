@@ -18,8 +18,8 @@ entity MemoryController is
 
         pc_in             : in std_logic_vector(15 downto 0);
 
-        mem_interface_out : out mem_interface;
-        mem_data_in       : in std_logic_vector(15 downto 0)
+        interface_out : out mem_interface_in;
+        interface_in  : in mem_interface_out
     );
 end entity;
 
@@ -31,12 +31,12 @@ architecture rtl of MemoryController is
 
 begin
 
-    mem_interface_out.clk      <= bus_in.clk;
-    mem_interface_out.data     <= bus_in.data;
-    mem_interface_out.write_en <= '1' when bus_in.dest_sel = SEL_DEST_MEM else '0';
-    mem_interface_out.adr      <= pc_in when bus_in.src_sel = SEL_SRC_OP else adr;
+    interface_out.clk      <= bus_in.clk;
+    interface_out.data     <= bus_in.data;
+    interface_out.write_en <= '1' when bus_in.dest_sel = SEL_DEST_MEM else '0';
+    interface_out.adr <= pc_in when bus_in.src_sel = SEL_SRC_OP else adr;
 
-    bus_out.data <= mem_data_in when pass_mem_output else data_out;
+    bus_out.data <= interface_in.data when pass_mem_output else data_out;
 
     process (bus_in.clk)
     begin

@@ -18,11 +18,28 @@ package package_16TTAC is
         halt : std_logic;
     end record;
 
-    type mem_interface is record
+    type mem_interface_in is record
         clk      : std_logic;
         write_en : std_logic;
         adr      : std_logic_vector(15 downto 0);
         data     : std_logic_vector(15 downto 0);
+    end record;
+
+    type mem_interface_out is record
+        data : std_logic_vector(15 downto 0);
+    end record;
+
+    type io_interface_in is record
+        clk      : std_logic;
+        reset    : std_logic;
+        write_en : std_logic;
+        data     : std_logic_vector(7 downto 0);
+    end record;
+
+    type io_interface_out is record
+        write_avail : std_logic;
+        new_data    : std_logic;
+        data        : std_logic_vector(7 downto 0);
     end record;
 
 end package;
