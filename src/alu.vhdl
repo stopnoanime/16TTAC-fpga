@@ -26,7 +26,7 @@ entity ALU is
         carry_flag_out : out std_logic;
         zero_flag_out  : out std_logic
     );
-end ALU;
+end entity;
 
 architecture rtl of ALU is
 

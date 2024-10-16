@@ -19,7 +19,7 @@ entity ControlUnit is
         src_sel_out  : out select_type;
         dest_sel_out : out select_type
     );
-end ControlUnit;
+end entity;
 
 architecture rtl of ControlUnit is
 

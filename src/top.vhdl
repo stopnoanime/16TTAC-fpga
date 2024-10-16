@@ -13,7 +13,7 @@ entity Top is
         uart_tx  : out std_logic;
         uart_rx  : inout std_logic
     );
-end Top;
+end entity;
 
 architecture rtl of Top is
 
