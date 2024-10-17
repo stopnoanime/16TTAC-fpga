@@ -50,11 +50,8 @@ begin
                 end if;
 
                 -- DESTINATION
-                if bus_in.dest_sel = SEL_DEST_PC then
+                if bus_in.dest_sel = SEL_DEST_PC or bus_in.dest_sel = SEL_DEST_CALL then
                     pc_reg <= bus_in.data;
-                elsif bus_in.dest_sel = SEL_DEST_CALL then
-                    pc_reg <= bus_in.data;
-                    -- TO DO: ADD CALL LOGIC
                 end if;
 
             end if;
