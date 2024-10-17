@@ -1,2 +1,6 @@
-set_pin_assignment {clk_in} { LOCATION = K14; }		##24MHZ
-set_pin_assignment {reset_in} { LOCATION = K16; }	##USER_KEY
+set_pin_assignment { clk_in } { LOCATION = K14; }
+set_pin_assignment { reset_in } { LOCATION = K16; }
+
+set_pin_assignment	{ led_o[0] } { LOCATION = J14; }
+set_pin_assignment	{ led_o[1] } { LOCATION = P13; }
+set_pin_assignment	{ led_o[2] } { LOCATION = R3; }
