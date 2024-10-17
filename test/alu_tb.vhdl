@@ -25,14 +25,17 @@ begin
 
             SEL_DEST_ACC   => 7x"1",
             SEL_DEST_ADD   => 7x"2",
-            SEL_DEST_SUB   => 7x"3",
-            SEL_DEST_SHL   => 7x"4",
-            SEL_DEST_SHR   => 7x"5",
-            SEL_DEST_AND   => 7x"6",
-            SEL_DEST_XOR   => 7x"7",
-            SEL_DEST_OR    => 7x"8",
-            SEL_DEST_CARRY => 7x"9",
-            SEL_DEST_ZERO  => 7x"A"
+            SEL_DEST_ADDC  => 7x"3",
+            SEL_DEST_SUB   => 7x"4",
+            SEL_DEST_SUBC  => 7x"5",
+            SEL_DEST_MUL   => 7x"6",
+            SEL_DEST_SHL   => 7x"7",
+            SEL_DEST_SHR   => 7x"8",
+            SEL_DEST_AND   => 7x"9",
+            SEL_DEST_XOR   => 7x"A",
+            SEL_DEST_OR    => 7x"B",
+            SEL_DEST_CARRY => 7x"C",
+            SEL_DEST_ZERO  => 7x"D"
         )
         port map(
             bus_in         => bus_in,
@@ -64,12 +67,20 @@ begin
 
     begin
         -- Test NOP
-        bus_in.data     <= (others => '0');
-        bus_in.src_sel  <= (others => '0');
-        bus_in.dest_sel <= (others => '0');
+        bus_in.src_sel  <= 7x"0";
+        bus_in.dest_sel <= 7x"0";
+        bus_in.data     <= x"0000";
         wait for clk_period;
 
         assert bus_out.data = x"0000" report "NOP failed!" severity error;
+
+        -- Test TRUE
+        bus_in.src_sel  <= 7x"2";
+        bus_in.dest_sel <= 7x"0";
+        bus_in.data     <= x"0000";
+        wait for clk_period;
+
+        assert bus_out.data = x"FFFF" report "TRUE failed!" severity error;
 
         -- Test ACC
         bus_in.src_sel  <= 7x"0";
@@ -97,50 +108,67 @@ begin
 
         -- Test SUB
         bus_in.src_sel  <= 7x"0";
-        bus_in.dest_sel <= 7x"3";
+        bus_in.dest_sel <= 7x"4";
         bus_in.data     <= x"0004";
         wait for clk_period;
 
         assert_ACC(x"FFFE", '1', '0', "SUB failed!");
 
-        -- Test ADD CARRY
+        -- Test ADDC
         bus_in.src_sel  <= 7x"0";
-        bus_in.dest_sel <= 7x"2";
+        bus_in.dest_sel <= 7x"3";
         bus_in.data     <= x"0000";
         wait for clk_period;
 
         assert_ACC(x"FFFF", '0', '0', "ADD CARRY failed!");
 
+        -- Test MUL
+        bus_in.src_sel  <= 7x"0";
+        bus_in.dest_sel <= 7x"6";
+        bus_in.data     <= x"FFFC";
+
+        wait for clk_period;
+
+        assert_ACC(x"0004", '1', '0', "MUL failed!");
+
+        bus_in.src_sel  <= 7x"0";
+        bus_in.dest_sel <= 7x"6";
+        bus_in.data     <= x"002A";
+
+        wait for clk_period;
+
+        assert_ACC(x"00A8", '0', '0', "MUL failed!");
+
         -- Test XOR
         bus_in.src_sel  <= 7x"0";
-        bus_in.dest_sel <= 7x"7";
+        bus_in.dest_sel <= 7x"A";
         bus_in.data     <= x"5555";
         wait for clk_period;
 
-        assert_ACC(x"AAAA", '0', '0', "XOR failed!");
+        assert_ACC(x"55FD", '0', '0', "XOR failed!");
 
         -- Test SHL
         bus_in.src_sel  <= 7x"0";
-        bus_in.dest_sel <= 7x"4";
-        bus_in.data     <= x"0003";
+        bus_in.dest_sel <= 7x"7";
+        bus_in.data     <= x"0002";
         wait for clk_period;
 
-        assert_ACC(x"5550", '1', '0', "SHL failed!");
+        assert_ACC(x"57F4", '1', '0', "SHL failed!");
 
         -- Test CARRY SET
         bus_in.src_sel  <= 7x"0";
-        bus_in.dest_sel <= 7x"9";
+        bus_in.dest_sel <= 7x"C";
         bus_in.data     <= x"0000";
         wait for clk_period;
 
-        assert_ACC(x"5550", '0', '0', "CARRY SET failed!");
+        assert_ACC(x"57F4", '0', '0', "CARRY SET failed!");
 
         bus_in.src_sel  <= 7x"0";
-        bus_in.dest_sel <= 7x"9";
+        bus_in.dest_sel <= 7x"C";
         bus_in.data     <= x"0001";
         wait for clk_period;
 
-        assert_ACC(x"5550", '1', '0', "CARRY SET failed!");
+        assert_ACC(x"57F4", '1', '0', "CARRY SET failed!");
 
         assert false report "Testbench finished" severity note;
         wait;

@@ -10,7 +10,10 @@ entity ALU is
 
         SEL_DEST_ACC   : select_type;
         SEL_DEST_ADD   : select_type;
+        SEL_DEST_ADDC  : select_type;
         SEL_DEST_SUB   : select_type;
+        SEL_DEST_SUBC  : select_type;
+        SEL_DEST_MUL   : select_type;
         SEL_DEST_SHL   : select_type;
         SEL_DEST_SHR   : select_type;
         SEL_DEST_AND   : select_type;
@@ -42,6 +45,7 @@ begin
     process (bus_in.clk)
 
         variable result      : unsigned(16 downto 0);
+        variable mul_result  : unsigned(31 downto 0);
         variable save_result : boolean;
 
     begin
@@ -62,10 +66,20 @@ begin
 
             if bus_in.dest_sel = SEL_DEST_ACC then
                 result := unsigned('0' & bus_in.data);
+
             elsif bus_in.dest_sel = SEL_DEST_ADD then
+                result := unsigned('0' & acc) + unsigned('0' & bus_in.data);
+            elsif bus_in.dest_sel = SEL_DEST_ADDC then
                 result := unsigned('0' & acc) + unsigned('0' & bus_in.data) + ("" & carry_flag);
             elsif bus_in.dest_sel = SEL_DEST_SUB then
+                result := unsigned('0' & acc) - unsigned('0' & bus_in.data);
+            elsif bus_in.dest_sel = SEL_DEST_SUBC then
                 result := unsigned('0' & acc) - unsigned('0' & bus_in.data) - ("" & carry_flag);
+
+            elsif bus_in.dest_sel = SEL_DEST_MUL then
+                mul_result          := unsigned(acc) * unsigned(bus_in.data);
+                result(16)          := or mul_result(31 downto 16);
+                result(15 downto 0) := mul_result(15 downto 0);
 
             elsif bus_in.dest_sel = SEL_DEST_SHL then
                 result := shift_left(unsigned('0' & acc), to_integer(unsigned(bus_in.data)));
