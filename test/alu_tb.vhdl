@@ -2,6 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use work.package_16TTAC.all;
+use std.env.stop;
 
 entity ALU_tb is
 end entity;
@@ -171,7 +172,7 @@ begin
         assert_ACC(x"57F4", '1', '0', "CARRY SET failed!");
 
         assert false report "Testbench finished" severity note;
-        wait;
+        stop;
 
     end process;
 
