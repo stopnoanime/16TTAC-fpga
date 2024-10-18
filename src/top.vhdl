@@ -20,30 +20,143 @@ end entity;
 
 architecture rtl of Top is
 
+    signal reset         : std_logic;
+
+    signal cpu_bus       : cpu_bus_in;
+    signal alu_bus_out   : cpu_bus_out;
+    signal halt_bus_out  : cpu_bus_out;
+    signal io_bus_out    : cpu_bus_out;
+    signal led_bus_out   : cpu_bus_out;
+    signal mem_bus_out   : cpu_bus_out;
+    signal pc_bus_out    : cpu_bus_out;
+    signal stack_bus_out : cpu_bus_out;
+
+    signal bus_data      : std_logic_vector(15 downto 0);
+    signal halt          : std_logic;
+
+    signal carry_flag    : std_logic;
+    signal zero_flag     : std_logic;
+
+    signal io_intf_in    : io_interface_in;
+    signal io_intf_out   : io_interface_out;
+
+    signal mem_intf_in   : mem_interface_in;
+    signal mem_intf_out  : mem_interface_out;
+
+    signal pc_value      : std_logic_vector(15 downto 0);
+
 begin
 
-    -- ALU : entity work.ALU
-    --     generic map(
-    --         SEL_SRC_ACC    => "0000000",
-    --         SEL_SRC_TRUE   => "0000000",
+    reset    <= not resetn_in;
 
-    --         SEL_DEST_ACC   => "0000000",
-    --         SEL_DEST_ADD   => "0000000",
-    --         SEL_DEST_SUB   => "0000000",
-    --         SEL_DEST_SHL   => "0000000",
-    --         SEL_DEST_SHR   => "0000000",
-    --         SEL_DEST_AND   => "0000000",
-    --         SEL_DEST_XOR   => "0000000",
-    --         SEL_DEST_OR    => "0000000",
+    -- TO CONTROL UNIT
+    bus_data <=
+        alu_bus_out.data or
+        halt_bus_out.data or
+        io_bus_out.data or
+        led_bus_out.data or
+        mem_bus_out.data or
+        pc_bus_out.data or
+        stack_bus_out.data;
 
-    --         SEL_DEST_CARRY => "0000000",
-    --         SEL_DEST_ZERO  => "0000000"
-    --     )
+    halt <=
+        alu_bus_out.halt or
+        halt_bus_out.halt or
+        io_bus_out.halt or
+        led_bus_out.halt or
+        mem_bus_out.halt or
+        pc_bus_out.halt or
+        stack_bus_out.halt;
+
+    -- TO OTHER UNITS
+    cpu_bus.clk   <= clk_in;
+    cpu_bus.reset <= reset;
+    cpu_bus.data  <= bus_data;
+
+    ControlUnit_inst : entity work.ControlUnit
+        port map(
+            clk_in        => clk_in,
+            reset_in      => reset,
+
+            src_sel_out   => cpu_bus.src_sel,
+            dest_sel_out  => cpu_bus.dest_sel,
+
+            data_in       => bus_data,
+            halt_in       => halt,
+
+            carry_flag_in => carry_flag,
+            zero_flag_in  => zero_flag
+        );
+
+    ALU_inst : entity work.ALU
+        port map(
+            bus_in         => cpu_bus,
+            bus_out        => alu_bus_out,
+            carry_flag_out => carry_flag,
+            zero_flag_out  => zero_flag
+        );
+
+    Halt_inst : entity work.Halt
+        port map(
+            bus_in  => cpu_bus,
+            bus_out => halt_bus_out
+        );
+
+    IOController_inst : entity work.IOController
+        port map(
+            bus_in        => cpu_bus,
+            bus_out       => io_bus_out,
+            interface_out => io_intf_in,
+            interface_in  => io_intf_out
+        );
+
+    -- UART_inst : entity work.UART
     --     port map(
-    --         bus_in         => open,
-    --         bus_out        => open,
-    --         carry_flag_out => open,
-    --         zero_flag_out  => open
+    --         interface_in  => io_intf_in,
+    --         interface_out => io_intf_out
     --     );
+
+    LED_inst : entity work.LED
+        port map(
+            bus_in  => cpu_bus,
+            bus_out => led_bus_out,
+            led_out => led_out
+        );
+
+    MemoryController_inst : entity work.MemoryController
+        port map(
+            bus_in        => cpu_bus,
+            bus_out       => mem_bus_out,
+            pc_in         => pc_value,
+            interface_out => mem_intf_in,
+            interface_in  => mem_intf_out
+        );
+
+    Memory_inst : entity work.Memory
+        generic map(
+            MEM_POW2_SIZE => 16,
+            INIT_FILE     => "ram-init.hex"
+        )
+        port map(
+            interface_in  => mem_intf_in,
+            interface_out => mem_intf_out
+        );
+
+    PC_inst : entity work.PC
+        port map(
+            bus_in  => cpu_bus,
+            bus_out => pc_bus_out,
+            pc_out  => pc_value
+        );
+
+    Stack_inst : entity work.Stack
+        generic map(
+            STACK_POW2_SIZE => 8
+        )
+        port map(
+            bus_in  => cpu_bus,
+            bus_out => stack_bus_out,
+            pc_in   => pc_value
+        );
 
 end architecture;

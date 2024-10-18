@@ -5,12 +5,7 @@ use work.package_16TTAC.all;
 
 entity Stack is
     generic (
-        STACK_POW2_SIZE : natural;
-
-        SEL_SRC_POP     : select_type;
-
-        SEL_DEST_PUSH   : select_type;
-        SEL_DEST_CALL   : select_type
+        STACK_POW2_SIZE : natural
     );
     port (
         bus_in  : in cpu_bus_in;

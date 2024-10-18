@@ -4,13 +4,6 @@ use IEEE.NUMERIC_STD.all;
 use work.package_16TTAC.all;
 
 entity PC is
-    generic (
-        SEL_SRC_PC    : select_type;
-        SEL_SRC_OP    : select_type;
-
-        SEL_DEST_PC   : select_type;
-        SEL_DEST_CALL : select_type
-    );
     port (
         bus_in  : in cpu_bus_in;
         bus_out : out cpu_bus_out;

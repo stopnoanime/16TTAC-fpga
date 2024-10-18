@@ -6,8 +6,8 @@ use std.textio.all;
 
 entity Memory is
     generic (
-        MEM_SIZE  : natural;
-        INIT_FILE : string
+        MEM_POW2_SIZE : natural;
+        INIT_FILE     : string
     );
     port (
         interface_in  : in mem_interface_in;
@@ -17,7 +17,7 @@ end entity;
 
 architecture rtl of Memory is
 
-    type mem_type is array (0 to MEM_SIZE - 1) of std_logic_vector(15 downto 0);
+    type mem_type is array (0 to (2 ** MEM_POW2_SIZE) - 1) of std_logic_vector(15 downto 0);
 
     impure function init_ram return mem_type is
         file text_file     : text open read_mode is INIT_FILE;
@@ -25,7 +25,7 @@ architecture rtl of Memory is
         variable temp_ram  : mem_type;
     begin
 
-        for i in 0 to MEM_SIZE - 1 loop
+        for i in 0 to (2 ** MEM_POW2_SIZE) - 1 loop
             readline(text_file, text_line);
             hread(text_line, temp_ram(i));
         end loop;

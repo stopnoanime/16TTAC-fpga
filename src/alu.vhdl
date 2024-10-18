@@ -4,25 +4,6 @@ use IEEE.NUMERIC_STD.all;
 use work.package_16TTAC.all;
 
 entity ALU is
-    generic (
-        SEL_SRC_ACC    : select_type;
-        SEL_SRC_TRUE   : select_type;
-
-        SEL_DEST_ACC   : select_type;
-        SEL_DEST_ADD   : select_type;
-        SEL_DEST_ADDC  : select_type;
-        SEL_DEST_SUB   : select_type;
-        SEL_DEST_SUBC  : select_type;
-        SEL_DEST_MUL   : select_type;
-        SEL_DEST_SHL   : select_type;
-        SEL_DEST_SHR   : select_type;
-        SEL_DEST_AND   : select_type;
-        SEL_DEST_XOR   : select_type;
-        SEL_DEST_OR    : select_type;
-
-        SEL_DEST_CARRY : select_type;
-        SEL_DEST_ZERO  : select_type
-    );
     port (
         bus_in         : in cpu_bus_in;
         bus_out        : out cpu_bus_out;

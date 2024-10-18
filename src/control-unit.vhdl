@@ -4,20 +4,18 @@ use IEEE.NUMERIC_STD.all;
 use work.package_16TTAC.all;
 
 entity ControlUnit is
-    generic (
-        SEL_SRC_OP : select_type
-    );
     port (
         clk_in        : in std_logic;
         reset_in      : in std_logic;
 
-        halt_in       : in std_logic;
-        carry_flag_in : in std_logic;
-        zero_flag_in  : in std_logic;
-        data_in       : in std_logic_vector(15 downto 0);
-
         src_sel_out   : out select_type;
-        dest_sel_out  : out select_type
+        dest_sel_out  : out select_type;
+
+        data_in       : in std_logic_vector(15 downto 0);
+        halt_in       : in std_logic;
+
+        carry_flag_in : in std_logic;
+        zero_flag_in  : in std_logic
     );
 end entity;
 
@@ -54,7 +52,7 @@ begin
     begin
 
         if rising_edge(clk_in) then
-            
+
             if reset_in = '1' then
 
                 delayed_dest_sel <= (others => '0');
