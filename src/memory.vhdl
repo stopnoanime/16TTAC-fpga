@@ -22,10 +22,11 @@ architecture rtl of Memory is
     impure function init_ram return mem_type is
         file text_file     : text open read_mode is INIT_FILE;
         variable text_line : line;
-        variable temp_ram  : mem_type;
+        variable temp_ram  : mem_type := (others => (others => '0'));
     begin
 
         for i in 0 to (2 ** MEM_POW2_SIZE) - 1 loop
+            exit when endfile(text_file);
             readline(text_file, text_line);
             hread(text_line, temp_ram(i));
         end loop;

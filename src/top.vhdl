@@ -11,7 +11,7 @@ entity Top is
 
         -- UART
         uart_tx   : out std_logic;
-        uart_rx   : inout std_logic;
+        uart_rx   : in std_logic;
 
         -- LED
         led_out   : out std_logic_vector(2 downto 0)

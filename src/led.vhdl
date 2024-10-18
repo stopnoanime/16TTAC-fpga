@@ -18,7 +18,8 @@ architecture rtl of LED is
 
 begin
 
-    led_out <= not led_reg(2 downto 0);
+    bus_out.halt <= '0';
+    led_out      <= not led_reg(2 downto 0);
 
     process (bus_in.clk)
     begin

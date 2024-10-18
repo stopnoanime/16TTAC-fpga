@@ -29,28 +29,36 @@ begin
     interface_out.adr <= pc_in when bus_in.src_sel = SEL_SRC_OP else adr;
 
     bus_out.data <= interface_in.data when pass_mem_output else data_out;
+    bus_out.halt <= '0';
 
     process (bus_in.clk)
     begin
 
         if rising_edge(bus_in.clk) then
 
-            -- SOURCE
-            if bus_in.src_sel = SEL_SRC_MEM or bus_in.src_sel = SEL_SRC_OP then
-                pass_mem_output <= TRUE;
-            elsif bus_in.src_sel = SEL_SRC_ADR then
-                data_out        <= adr;
-                pass_mem_output <= FALSE;
+            if bus_in.reset = '1' then
+
+                adr <= (others => '0');
+
             else
-                data_out        <= (others => '0');
-                pass_mem_output <= FALSE;
-            end if;
+                -- SOURCE
+                if bus_in.src_sel = SEL_SRC_MEM or bus_in.src_sel = SEL_SRC_OP then
+                    pass_mem_output <= TRUE;
+                elsif bus_in.src_sel = SEL_SRC_ADR then
+                    data_out        <= adr;
+                    pass_mem_output <= FALSE;
+                else
+                    data_out        <= (others => '0');
+                    pass_mem_output <= FALSE;
+                end if;
 
-            -- DESTINATION
-            if bus_in.dest_sel = SEL_DEST_ADR then
-                adr <= bus_in.data;
-            end if;
+                -- DESTINATION
+                if bus_in.dest_sel = SEL_DEST_ADR then
+                    adr <= bus_in.data;
+                end if;
 
+            end if;
+    
         end if;
 
     end process;

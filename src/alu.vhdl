@@ -20,6 +20,7 @@ architecture rtl of ALU is
 
 begin
 
+    bus_out.halt   <= '0';
     carry_flag_out <= carry_flag;
     zero_flag_out  <= zero_flag;
 
@@ -33,64 +34,74 @@ begin
 
         if rising_edge(bus_in.clk) then
 
-            -- SOURCE
-            if bus_in.src_sel = SEL_SRC_ACC then
-                bus_out.data <= acc;
-            elsif bus_in.src_sel = SEL_SRC_TRUE then
-                bus_out.data <= (others => '1');
-            else
-                bus_out.data <= (others => '0');
-            end if;
+            if bus_in.reset = '1' then
 
-            -- DESTINATION
-            save_result := TRUE;
-
-            if bus_in.dest_sel = SEL_DEST_ACC then
-                result := unsigned('0' & bus_in.data);
-
-            elsif bus_in.dest_sel = SEL_DEST_ADD then
-                result := unsigned('0' & acc) + unsigned('0' & bus_in.data);
-            elsif bus_in.dest_sel = SEL_DEST_ADDC then
-                result := unsigned('0' & acc) + unsigned('0' & bus_in.data) + ("" & carry_flag);
-            elsif bus_in.dest_sel = SEL_DEST_SUB then
-                result := unsigned('0' & acc) - unsigned('0' & bus_in.data);
-            elsif bus_in.dest_sel = SEL_DEST_SUBC then
-                result := unsigned('0' & acc) - unsigned('0' & bus_in.data) - ("" & carry_flag);
-
-            elsif bus_in.dest_sel = SEL_DEST_MUL then
-                mul_result          := unsigned(acc) * unsigned(bus_in.data);
-                result(16)          := or mul_result(31 downto 16);
-                result(15 downto 0) := mul_result(15 downto 0);
-
-            elsif bus_in.dest_sel = SEL_DEST_SHL then
-                result := shift_left(unsigned('0' & acc), to_integer(unsigned(bus_in.data)));
-            elsif bus_in.dest_sel = SEL_DEST_SHR then
-                result := shift_right(unsigned('0' & acc), to_integer(unsigned(bus_in.data)));
-
-            elsif bus_in.dest_sel = SEL_DEST_AND then
-                result := unsigned('0' & bus_in.data) and unsigned('0' & acc);
-            elsif bus_in.dest_sel = SEL_DEST_OR then
-                result := unsigned('0' & bus_in.data) or unsigned('0' & acc);
-            elsif bus_in.dest_sel = SEL_DEST_XOR then
-                result := unsigned('0' & bus_in.data) xor unsigned('0' & acc);
-
-            elsif bus_in.dest_sel = SEL_DEST_CARRY then
-                save_result := FALSE;
-                carry_flag <= or bus_in.data;
-
-            elsif bus_in.dest_sel = SEL_DEST_ZERO then
-                save_result := FALSE;
-                zero_flag <= or bus_in.data;
+                acc        <= (others => '0');
+                carry_flag <= '0';
+                zero_flag  <= '0';
 
             else
-                save_result := FALSE;
 
-            end if;
+                -- SOURCE
+                if bus_in.src_sel = SEL_SRC_ACC then
+                    bus_out.data <= acc;
+                elsif bus_in.src_sel = SEL_SRC_TRUE then
+                    bus_out.data <= (others => '1');
+                else
+                    bus_out.data <= (others => '0');
+                end if;
 
-            if save_result then
-                carry_flag <= result(16);
-                zero_flag  <= nor result(15 downto 0);
-                acc        <= std_logic_vector(result(15 downto 0));
+                -- DESTINATION
+                save_result := TRUE;
+
+                if bus_in.dest_sel = SEL_DEST_ACC then
+                    result := unsigned('0' & bus_in.data);
+
+                elsif bus_in.dest_sel = SEL_DEST_ADD then
+                    result := unsigned('0' & acc) + unsigned('0' & bus_in.data);
+                elsif bus_in.dest_sel = SEL_DEST_ADDC then
+                    result := unsigned('0' & acc) + unsigned('0' & bus_in.data) + ("" & carry_flag);
+                elsif bus_in.dest_sel = SEL_DEST_SUB then
+                    result := unsigned('0' & acc) - unsigned('0' & bus_in.data);
+                elsif bus_in.dest_sel = SEL_DEST_SUBC then
+                    result := unsigned('0' & acc) - unsigned('0' & bus_in.data) - ("" & carry_flag);
+
+                elsif bus_in.dest_sel = SEL_DEST_MUL then
+                    mul_result          := unsigned(acc) * unsigned(bus_in.data);
+                    result(16)          := or mul_result(31 downto 16);
+                    result(15 downto 0) := mul_result(15 downto 0);
+
+                elsif bus_in.dest_sel = SEL_DEST_SHL then
+                    result := shift_left(unsigned('0' & acc), to_integer(unsigned(bus_in.data)));
+                elsif bus_in.dest_sel = SEL_DEST_SHR then
+                    result := shift_right(unsigned('0' & acc), to_integer(unsigned(bus_in.data)));
+
+                elsif bus_in.dest_sel = SEL_DEST_AND then
+                    result := unsigned('0' & bus_in.data) and unsigned('0' & acc);
+                elsif bus_in.dest_sel = SEL_DEST_OR then
+                    result := unsigned('0' & bus_in.data) or unsigned('0' & acc);
+                elsif bus_in.dest_sel = SEL_DEST_XOR then
+                    result := unsigned('0' & bus_in.data) xor unsigned('0' & acc);
+
+                elsif bus_in.dest_sel = SEL_DEST_CARRY then
+                    save_result := FALSE;
+                    carry_flag <= or bus_in.data;
+
+                elsif bus_in.dest_sel = SEL_DEST_ZERO then
+                    save_result := FALSE;
+                    zero_flag <= or bus_in.data;
+
+                else
+                    save_result := FALSE;
+
+                end if;
+
+                if save_result then
+                    carry_flag <= result(16);
+                    zero_flag  <= nor result(15 downto 0);
+                    acc        <= std_logic_vector(result(15 downto 0));
+                end if;
+
             end if;
 
         end if;

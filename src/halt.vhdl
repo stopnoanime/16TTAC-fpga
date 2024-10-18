@@ -13,6 +13,8 @@ end entity;
 architecture rtl of Halt is
 begin
 
+    bus_out.data <= (others => '0');
+
     process (bus_in.clk)
     begin
 

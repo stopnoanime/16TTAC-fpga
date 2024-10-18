@@ -15,9 +15,9 @@ end entity;
 
 architecture rtl of IOController is
 
-    signal waiting_for_write : std_logic := '0';
-    signal waiting_for_read  : std_logic := '0';
-    signal read_available    : std_logic := '0';
+    signal waiting_for_write : std_logic;
+    signal waiting_for_read  : std_logic;
+    signal read_available    : std_logic;
 
 begin
 
@@ -31,14 +31,12 @@ begin
 
         if rising_edge(bus_in.clk) then
 
-            interface_out.write_en <= '0';
-            bus_out.data           <= (others => '0');
-
             if bus_in.reset = '1' then
 
-                waiting_for_write <= '0';
-                waiting_for_read  <= '0';
-                read_available    <= '0';
+                waiting_for_write      <= '0';
+                waiting_for_read       <= '0';
+                read_available         <= '0';
+                interface_out.write_en <= '0';
 
             else
 
@@ -56,22 +54,21 @@ begin
                         waiting_for_read <= '1';
                     end if;
 
-                end if;
+                elsif waiting_for_read = '1' and read_available = '1' then
 
-                -- READ AVAILABLE
-                if interface_in.new_data = '1' then
-                    read_available <= '1';
-                end if;
-
-                -- READ HALT
-                if waiting_for_read = '1' and read_available = '1' then
                     bus_out.data     <= x"00" & interface_in.data;
                     read_available   <= '0';
                     waiting_for_read <= '0';
+
+                else
+
+                    bus_out.data <= (others => '0');
+
                 end if;
 
                 -- DESTINATION
                 if bus_in.dest_sel = SEL_DEST_OUT then
+
                     interface_out.data <= bus_in.data(7 downto 0);
 
                     if interface_in.write_avail = '1' then
@@ -79,12 +76,21 @@ begin
                     else
                         waiting_for_write <= '1';
                     end if;
-                end if;
 
-                -- WRITE HALT
-                if waiting_for_write = '1' and interface_in.write_avail = '1' then
+                elsif waiting_for_write = '1' and interface_in.write_avail = '1' then
+
                     interface_out.write_en <= '1';
                     waiting_for_write      <= '0';
+
+                else
+
+                    interface_out.write_en <= '0';
+
+                end if;
+
+                -- READ AVAILABLE
+                if interface_in.new_data = '1' then
+                    read_available <= '1';
                 end if;
 
             end if;

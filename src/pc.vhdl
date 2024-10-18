@@ -18,7 +18,8 @@ architecture rtl of PC is
 
 begin
 
-    pc_out <= pc_reg;
+    bus_out.halt <= '0';
+    pc_out       <= pc_reg;
 
     process (bus_in.clk)
     begin
@@ -27,8 +28,7 @@ begin
 
             if bus_in.reset = '1' then
 
-                pc_reg       <= (others => '0');
-                bus_out.data <= (others => '0');
+                pc_reg <= (others => '0');
 
             else
 

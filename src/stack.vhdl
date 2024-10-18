@@ -24,13 +24,17 @@ architecture rtl of Stack is
 
 begin
 
+    bus_out.halt <= '0';
+
     process (bus_in.clk)
     begin
 
         if rising_edge(bus_in.clk) then
 
             if bus_in.reset = '1' then
+
                 stack_ptr <= (others => '0');
+
             else
 
                 -- SOURCE
