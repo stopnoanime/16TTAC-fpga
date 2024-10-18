@@ -20,7 +20,7 @@ architecture rtl of Stack is
     type stack_type is array (0 to 2 ** STACK_POW2_SIZE - 1) of std_logic_vector(15 downto 0);
     signal stack_mem : stack_type;
 
-    signal stack_ptr : unsigned(STACK_POW2_SIZE downto 0) := (others => '0');
+    signal stack_ptr : unsigned(STACK_POW2_SIZE downto 0);
 
 begin
 

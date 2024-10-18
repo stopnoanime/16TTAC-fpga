@@ -10,8 +10,6 @@ end entity;
 architecture tb of Top_tb is
 
     signal clk          : std_logic := '0';
-    signal resetn       : std_logic := '1';
-
     constant clk_period : time      := 42 ns;
 
 begin
@@ -21,7 +19,7 @@ begin
     Top_inst : entity work.Top
         port map(
             clk_in    => clk,
-            resetn_in => resetn,
+            resetn_in => '1',
             uart_tx   => open,
             uart_rx   => '1',
             led_out   => open
@@ -29,11 +27,7 @@ begin
 
     process
     begin
-        resetn <= '0';
-        wait for clk_period * 2;
-        resetn <= '1';
-
-        wait for clk_period * 100;
+        wait for clk_period * 1000;
 
         stop;
     end process;

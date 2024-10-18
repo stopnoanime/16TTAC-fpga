@@ -26,7 +26,7 @@ architecture rtl of ControlUnit is
     signal should_execute : boolean;
 
     type state_type is (FETCH, SRC, DEST);
-    signal state            : state_type := FETCH;
+    signal state            : state_type;
     signal delayed_dest_sel : select_type;
 
 begin

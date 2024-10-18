@@ -14,7 +14,7 @@ end entity;
 
 architecture rtl of PC is
 
-    signal pc_reg : std_logic_vector(15 downto 0) := (others => '0');
+    signal pc_reg : std_logic_vector(15 downto 0);
 
 begin
 

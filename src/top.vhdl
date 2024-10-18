@@ -47,7 +47,15 @@ architecture rtl of Top is
 
 begin
 
-    reset    <= not resetn_in;
+    ResetController_inst : entity work.ResetController
+        generic map(
+            DEBOUNCE_FACTOR => 18
+        )
+        port map(
+            clk_in    => clk_in,
+            resetn_in => resetn_in,
+            reset_out => reset
+        );
 
     -- TO CONTROL UNIT
     bus_data <=
