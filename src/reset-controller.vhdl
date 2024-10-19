@@ -23,7 +23,7 @@ architecture rtl of ResetController is
     signal debounce_df2     : std_logic                          := '0';
 begin
 
-    reset_out <= (not reset_shift(3)) or (debounce_df1 and debounce_df2);
+    reset_out <= (not reset_shift(3)) or debounce_df2;
 
     process (clk_in)
     begin

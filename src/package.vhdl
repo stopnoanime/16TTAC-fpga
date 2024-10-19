@@ -53,10 +53,11 @@ package package_16TTAC is
     constant SEL_SRC_POP    : select_type := 7x"07";
     constant SEL_SRC_IN     : select_type := 7x"08";
     constant SEL_SRC_IN_AV  : select_type := 7x"09";
-    constant SEL_SRC_LED    : select_type := 7x"0A";
+    constant SEL_SRC_OUT_AV : select_type := 7x"0A";
+    constant SEL_SRC_LED    : select_type := 7x"0B";
 
     -- DESTINATIONS
-    constant SEL_DEST_NULL   : select_type := 7x"00";
+    constant SEL_DEST_NULL  : select_type := 7x"00";
     constant SEL_DEST_ACC   : select_type := 7x"01";
     constant SEL_DEST_ADD   : select_type := 7x"02";
     constant SEL_DEST_ADDC  : select_type := 7x"03";

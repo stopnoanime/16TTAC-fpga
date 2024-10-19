@@ -118,11 +118,16 @@ begin
             interface_in  => io_intf_out
         );
 
-    -- UART_inst : entity work.UART
-    --     port map(
-    --         interface_in  => io_intf_in,
-    --         interface_out => io_intf_out
-    --     );
+    UART_inst : entity work.UART
+        generic map(
+            CLOCKS_PER_BIT => 208
+        )
+        port map(
+            interface_in  => io_intf_in,
+            interface_out => io_intf_out,
+            uart_tx       => uart_tx,
+            uart_rx       => uart_rx
+        );
 
     LED_inst : entity work.LED
         port map(

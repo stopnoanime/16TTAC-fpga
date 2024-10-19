@@ -1,6 +1,7 @@
 # vhdl files
-FILES = $(filter-out src/package.vhdl, $(wildcard src/*.vhdl))
 PACKAGE_FILE = src/package.vhdl
+TOP_FILE = src/top.vhdl
+FILES = $(filter-out $(PACKAGE_FILE) $(TOP_FILE), $(wildcard src/*.vhdl))
 
 # testbench
 TESTBENCHPATH = test/${TESTBENCHFILE}*
@@ -32,6 +33,7 @@ endif
 	@mkdir -p $(WORKDIR)
 	@$(GHDL_CMD) -a $(GHDL_FLAGS) $(PACKAGE_FILE)
 	@$(GHDL_CMD) -a $(GHDL_FLAGS) $(FILES)
+	@$(GHDL_CMD) -a $(GHDL_FLAGS) $(TOP_FILE)
 	@$(GHDL_CMD) -a $(GHDL_FLAGS) $(TESTBENCHPATH)
 	@$(GHDL_CMD) -e $(GHDL_FLAGS) $(TESTBENCHFILE)
 

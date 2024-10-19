@@ -45,6 +45,10 @@ begin
 
                     bus_out.data <= x"FFFF" when read_available = '1' else x"0000";
 
+                elsif bus_in.src_sel = SEL_SRC_OUT_AV then
+
+                    bus_out.data <= x"FFFF" when interface_in.write_avail = '1' else x"0000";
+
                 elsif bus_in.src_sel = SEL_SRC_IN then
 
                     if read_available = '1' then
