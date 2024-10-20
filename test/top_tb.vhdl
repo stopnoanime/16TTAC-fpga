@@ -27,7 +27,7 @@ begin
 
     process
     begin
-        wait for clk_period * 10000;
+        wait for clk_period * 100000;
 
         stop;
     end process;

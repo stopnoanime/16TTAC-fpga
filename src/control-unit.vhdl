@@ -21,9 +21,10 @@ end entity;
 
 architecture rtl of ControlUnit is
 
-    signal src_sel        : select_type;
-    signal dest_sel       : select_type;
-    signal should_execute : boolean;
+    signal src_sel          : select_type;
+    signal dest_sel         : select_type;
+    signal should_execute   : boolean;
+    signal should_increment : boolean;
 
     type state_type is (FETCH, SRC, DEST);
     signal state            : state_type;
@@ -36,8 +37,15 @@ begin
         ((not data_in(1)) or carry_flag_in) = '1' and
         ((not data_in(0)) or zero_flag_in) = '1';
 
+    -- We have to increment PC when the instruction is two word long, 
+    -- even if we are not executing it.
+    should_increment <=
+        state = SRC and
+        (not should_execute) and
+        data_in(15 downto 9) = SEL_SRC_OP;
+
     src_sel <=
-        SEL_SRC_OP when state = FETCH else
+        SEL_SRC_OP when (state = FETCH) or should_increment else
         data_in(15 downto 9) when should_execute else
         (others => '0');
 

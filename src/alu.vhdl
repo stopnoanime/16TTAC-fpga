@@ -38,7 +38,7 @@ begin
 
                 acc        <= (others => '0');
                 carry_flag <= '0';
-                zero_flag  <= '0';
+                zero_flag  <= '1';
 
             else
 
@@ -65,6 +65,12 @@ begin
                     result := unsigned('0' & acc) - unsigned('0' & bus_in.data);
                 elsif bus_in.dest_sel = SEL_DEST_SUBC then
                     result := unsigned('0' & acc) - unsigned('0' & bus_in.data) - ("" & carry_flag);
+
+                elsif bus_in.dest_sel = SEL_DEST_CMP then
+                    save_result := FALSE;
+                    result      := unsigned('0' & acc) - unsigned('0' & bus_in.data);
+                    carry_flag <= result(16);
+                    zero_flag  <= nor result(15 downto 0);
 
                 elsif bus_in.dest_sel = SEL_DEST_MUL then
                     mul_result          := unsigned(acc) * unsigned(bus_in.data);
