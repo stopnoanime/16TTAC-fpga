@@ -6,3 +6,4 @@ build/
 *.exe
 *.vcd
 *.o
+*.bid

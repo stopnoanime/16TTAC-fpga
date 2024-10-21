@@ -146,10 +146,6 @@ begin
         );
 
     Memory_inst : entity work.Memory
-        generic map(
-            MEM_POW2_SIZE => 16,
-            INIT_FILE     => "ram-init.hex"
-        )
         port map(
             interface_in  => mem_intf_in,
             interface_out => mem_intf_out

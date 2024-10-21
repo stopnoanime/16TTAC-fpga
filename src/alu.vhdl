@@ -70,11 +70,11 @@ begin
                     save_result := FALSE;
                     result      := unsigned('0' & acc) - unsigned('0' & bus_in.data);
                     carry_flag <= result(16);
-                    zero_flag  <= nor result(15 downto 0);
+                    zero_flag  <= '1' when result(15 downto 0) = x"0000" else '0';
 
                 elsif bus_in.dest_sel = SEL_DEST_MUL then
                     mul_result          := unsigned(acc) * unsigned(bus_in.data);
-                    result(16)          := or mul_result(31 downto 16);
+                    result(16)          := '0' when mul_result(31 downto 16) = x"0000" else '1';
                     result(15 downto 0) := mul_result(15 downto 0);
 
                 elsif bus_in.dest_sel = SEL_DEST_SHL then
@@ -91,11 +91,11 @@ begin
 
                 elsif bus_in.dest_sel = SEL_DEST_CARRY then
                     save_result := FALSE;
-                    carry_flag <= or bus_in.data;
+                    carry_flag <= '0' when bus_in.data = x"0000" else '1';
 
                 elsif bus_in.dest_sel = SEL_DEST_ZERO then
                     save_result := FALSE;
-                    zero_flag <= or bus_in.data;
+                    zero_flag <= '0' when bus_in.data = x"0000" else '1';
 
                 else
                     save_result := FALSE;
@@ -104,7 +104,7 @@ begin
 
                 if save_result then
                     carry_flag <= result(16);
-                    zero_flag  <= nor result(15 downto 0);
+                    zero_flag  <= '1' when result(15 downto 0) = x"0000" else '0';
                     acc        <= std_logic_vector(result(15 downto 0));
                 end if;
 
