@@ -1,7 +1,8 @@
 # vhdl files
 PACKAGE_FILE = src/package.vhdl
 TOP_FILE = src/top.vhdl
-FILES = $(filter-out $(PACKAGE_FILE) $(TOP_FILE), $(wildcard src/*.vhdl))
+EXCLUDE_FILE = src/memory.vhdl
+FILES = $(filter-out $(PACKAGE_FILE) $(TOP_FILE) $(EXCLUDE_FILE), $(wildcard src/*.vhdl))
 
 # testbench
 TESTBENCHPATH = test/${TESTBENCHFILE}*
@@ -20,11 +21,11 @@ GHDL_SIM_OPT = --assert-level=error --max-stack-alloc=0
 # WAVEFORM_VIEWER = flatpak run io.github.gtkwave.GTKWave
 WAVEFORM_VIEWER = gtkwave
 
-.PHONY: clean
+.PHONY: clean build run view ram-init
 
-all: clean make run view
+all: clean build run view
 
-make:
+build:
 ifeq ($(strip $(TESTBENCH)),)
 	@echo "TESTBENCH not set. Use TESTBENCH=<value> to set it."
 	@exit 1
@@ -46,4 +47,7 @@ view:
 
 clean:
 	@rm -rf $(WORKDIR)
-	@rm -rf *.area *.db *.exe *.vcd *.ghw *.o *.log *.bit
+	@rm -rf *.area *.db *.exe *.vcd *.ghw *.o *.log *.bit *.bid
+
+ram-init:
+	python3 hex_to_mif.py

@@ -1,6 +1,18 @@
 [libraries]
 
 lib.files = [
-  'src/**/*.vhdl',
-  'test/**/*.vhdl',
+  'src/package.vhdl',
+  'src/top.vhdl',
+  'src/alu.vhdl',
+  'src/control-unit.vhdl', 
+  'src/halt.vhdl', 
+  'src/io-controller.vhdl', 
+  'src/led.vhdl', 
+  'src/memory-controller.vhdl', 
+  'src/memory-sim.vhdl', 
+  'src/pc.vhdl', 
+  'src/reset-controller.vhdl', 
+  'src/stack.vhdl', 
+  'src/uart.vhdl',
+  'test/*.vhdl',
 ]
