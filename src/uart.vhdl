@@ -145,7 +145,7 @@ begin
 
                         -- Wait until middle of start bit
                         if rx_clock_counter < (CLOCKS_PER_BIT - 1)/2 then
-                            rx_clock_counter <= tx_clock_counter + 1;
+                            rx_clock_counter <= rx_clock_counter + 1;
                         else
                             rx_clock_counter <= 0;
 

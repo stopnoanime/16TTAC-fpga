@@ -2,9 +2,10 @@
 *.bit
 *.db
 *.area
-build/
 *.exe
 *.vcd
 *.o
 *.bid
 *.ghw
+build/
+simulation/
